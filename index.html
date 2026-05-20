@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMMNEXUS - Premium SMM Provider Panel</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #070b19;
+            --bg-card: rgba(13, 20, 41, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --input-bg: rgba(7, 11, 25, 0.8);
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.3);
+            --accent: #60a5fa;
+            --text-main: #ffffff;
+            --text-muted: #64748b;
+            --text-desc: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(96, 165, 250, 0.05) 0%, transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px 16px;
+        }
+
+        /* Authentication Screen Styles */
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            margin-top: 40px;
+            display: none;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 6px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .auth-tab.active {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        /* Top Navigation Header Bar Style */
+        .navbar {
+            width: 100%;
+            max-width: 500px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 18px;
+            margin-bottom: 16px;
+        }
+
+        .brand-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .brand-logo span {
+            color: var(--primary);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Dynamic View Switching Submenu Bar */
+        .view-switcher-bar {
+            width: 100%;
+            max-width: 500px;
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .switch-view-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 12px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .switch-view-btn.active {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--primary);
+            color: var(--accent);
+        }
+
+        .wallet-display-badge {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: var(--danger);
+            color: #ffffff;
+        }
+
+        /* Views Configuration Layout Wrappers */
+        .panel-container {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 80px;
+            display: none;
+        }
+
+        .app-view {
+            display: none;
+        }
+
+        .app-view.active {
+            display: block;
+        }
+
+        /* Glassmorphic Main Card Layout */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Form Input Section Groups */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            padding-left: 2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i.input-icon {
+            position: absolute;
+            left: 16px;
+            color: var(--text-muted);
+            font-size: 15px;
+            pointer-events: none;
+            transition: color 0.2s ease;
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 15px 16px 15px 46px;
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        select.form-control {
+            padding-right: 44px;
+            cursor: pointer;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 18px;
+            color: var(--text-muted);
+            pointer-events: none;
+            font-size: 12px;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+
+        .form-control:focus ~ i.input-icon {
+            color: var(--accent);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        select.form-control option {
+            background-color: #0d1429;
+            color: var(--text-main);
+        }
+
+        /* Dynamic Description Content Box Area */
+        .description-box {
+            background: rgba(7, 11, 25, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-desc);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .description-box .desc-header {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Info Strips (Min-Max Indicator Setup) */
+        .info-strip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(59, 130, 246, 0.06);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: -8px;
+            margin-bottom: 20px;
+        }
+
+        /* Summary Matrix Grid Fields Setup */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: rgba(7, 11, 25, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px 16px;
+        }
+
+        .summary-card .lbl {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .summary-card .val {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .summary-card.highlight .val {
+            color: #f59e0b;
+        }
+
+        /* QR Code Container Alignment Area */
+        .qr-section-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .qr-placeholder-img {
+            width: 180px;
+            height: 180px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            color: #000000;
+            margin-bottom: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .qr-placeholder-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .deposit-notice-text {
+            font-size: 12px;
+            color: var(--text-desc);
+            line-height: 1.5;
+            max-width: 320px;
+        }
+
+        /* Buttons Styling */
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            border: none;
+            border-radius: 14px;
+            padding: 16px;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(29, 78, 216, 0.4);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(29, 78, 216, 0.55);
+        }
+
+        .btn-submit:active {
+            transform: translateY(1px);
+        }
+
+        /* Floating Interactive Action Overlays Hub */
+        .floating-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 999;
+        }
+
+        .btn-float {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            font-size: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-float:hover {
+            transform: scale(1.08);
+        }
+
+        .btn-whatsapp { background: #25d366; }
+        .btn-offers { background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); }
+
+        /* Dialog Box Component Modules Notification Layers */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: #0d1429;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            max-width: 420px;
+            width: 100%;
+            padding: 24px;
+            text-align: center;
+            transform: translateY(15px);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: translateY(0);
+        }
+
+        .modal-icon {
+            font-size: 44px;
+            margin-bottom: 14px;
+        }
+        .modal-icon.success { color: var(--success); }
+        .modal-icon.error { color: var(--danger); }
+        .modal-icon.offer { color: #ec4899; }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .modal-desc {
+            font-size: 13px;
+            color: var(--text-desc);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .btn-modal-close {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-modal-close:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .offers-list {
+            text-align: left;
+            margin: 14px 0;
+        }
+
+        .offer-item {
+            font-size: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            color: var(--text-desc);
+        }
+
+        .offer-item i {
+            color: #ec4899;
+            margin-top: 2px;
+        }
+
+        @media(max-width: 440px) {
+            .glass-card { padding: 18px; }
+            .summary-grid { gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Manual Authentication Container System -->
+    <div class="auth-container glass-card" id="authBox">
+        <div class="brand-logo" style="justify-content: center; margin-bottom: 24px; font-size: 26px;">
+            <i class="fa-solid fa-circle-nodes" style="color: var(--primary);"></i>SMM<span>NEXUS</span>
+        </div>
+        
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+            <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+        </div>
+
+        <!-- Manual Login System Block -->
+        <div id="loginForm" class="auth-form active">
+            <form onsubmit="handleManualLogin(event)">
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-envelope"></i> Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="loginUser" class="form-control" placeholder="Enter registration username" required>
+                        <i class="fa-solid fa-user input-icon"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-lock"></i> Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="loginPass" class="form-control" placeholder="Enter security key" required>
+                        <i class="fa-solid fa-lock input-icon"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" style="margin-top: 10px;">
+                    <i class="fa-solid fa-right-to-bracket"></i> Access Dashboard
+                </button>
+            </form>
+        </div>
+
+        <!-- Manual Register System Block -->
+        <div id="registerForm" class="auth-form">
+            <form onsubmit="handleManualRegister(event)">
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-user"></i> Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="regUser" class="form-control" placeholder="Create system username" required>
+                        <i class="fa-solid fa-user input-icon"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-envelope"></i> Email Identity</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="regEmail" class="form-control" placeholder="Enter configuration email" required>
+                        <i class="fa-solid fa-envelope input-icon"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-lock"></i> Account Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="regPass" class="form-control" placeholder="Define security parameters" required>
+                        <i class="fa-solid fa-lock input-icon"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" style="margin-top: 10px;">
+                    <i class="fa-solid fa-user-plus"></i> Initialize Profile Data
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header Navigation Container UI Block Setup -->
+    <div class="navbar" id="appNavbar">
+        <div class="brand-logo" onclick="switchMainView('order')">
+            <i class="fa-solid fa-circle-nodes" style="color: var(--primary);"></i>SMM<span>NEXUS</span>
+        </div>
+        <div class="nav-right">
+            <div class="wallet-display-badge" onclick="switchMainView('wallet')" style="cursor: pointer;" title="Click to add funds">
+                <i class="fa-solid fa-wallet"></i> <span id="navWalletBalance">₹0.00</span>
+            </div>
+            <button class="btn-logout" onclick="handleManualLogout()" title="Terminate Session">
+                <i class="fa-solid fa-power-off"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- View Switcher Tabs Bar -->
+    <div class="view-switcher-bar" id="appViewSwitcher">
+        <button class="switch-view-btn active" id="tabOrderView" onclick="switchMainView('order')">
+            <i class="fa-solid fa-cart-plus"></i> New Order
+        </button>
+        <button class="switch-view-btn" id="tabWalletView" onclick="switchMainView('wallet')">
+            <i class="fa-solid fa-qrcode"></i> Add Funds (Mani Add)
+        </button>
+    </div>
+
+    <div class="panel-container" id="appPanel">
+        
+        <!-- ================= VIEW 1: NEW ORDER FORM ================= -->
+        <div id="orderViewWrapper" class="app-view active">
+            <form id="smmOrderForm" action="https://formsubmit.co/ramlakhanchaurasiya26@gmail.com" method="POST" class="glass-card">
+                
+                <!-- Mandatory FormSubmit Fields -->
+                <input type="hidden" name="_subject" id="fs_subject" value="New Order Received">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                
+                <!-- Order Parameters Tracking Payload -->
+                <input type="hidden" name="Order ID" id="payload_order_id">
+                <input type="hidden" name="User Active" id="payload_user_session">
+                <input type="hidden" name="Selected Category" id="payload_category">
+                <input type="hidden" name="Selected Service" id="payload_service_name">
+                <input type="hidden" name="Service ID" id="payload_service_id">
+                <input type="hidden" name="Link" id="payload_link">
+                <input type="hidden" name="Quantity" id="payload_quantity">
+                <input type="hidden" name="Charge" id="payload_charge">
+                <input type="hidden" name="Current Balance Left" id="payload_balance_remaining">
+                <input type="hidden" name="Average Time" id="payload_avg_time">
+                <input type="hidden" name="Date Time" id="payload_datetime">
+
+                <!-- Search Utility Box -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-magnifying-glass"></i> Filter Service</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="searchService" class="form-control" placeholder="Search for a service...">
+                        <i class="fa-solid fa-magnifying-glass input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Category Control Selector Dropdown -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-layer-group"></i> Choose Category</label>
+                    <div class="input-wrapper">
+                        <select id="categorySelect" class="form-control" required></select>
+                        <i class="fa-solid fa-layer-group input-icon"></i>
+                        <i class="fa-solid fa-chevron-down select-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- Service Selector Dropdown -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-bolt"></i> Select Service</label>
+                    <div class="input-wrapper">
+                        <select id="serviceSelect" class="form-control" required></select>
+                        <i class="fa-solid fa-bolt input-icon"></i>
+                        <i class="fa-solid fa-chevron-down select-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- Informational Specification Injection Box -->
+                <div id="descriptionBox" class="description-box">
+                    <div class="desc-header">
+                        <i class="fa-solid fa-circle-info"></i> Service Specifications Details
+                    </div>
+                    <div id="descriptionText"></div>
+                </div>
+
+                <!-- Link Destination Field -->
+                <div class="form-group">
+                    <label class="form-label" id="linkLabel"><i class="fa-solid fa-link"></i> Target Link</label>
+                    <div class="input-wrapper">
+                        <input type="url" id="linkInput" class="form-control" placeholder="Enter link address destination" required>
+                        <i class="fa-solid fa-link input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Input Quantity Field Box -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-arrow-up-9-1"></i> Volume Quantity</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="quantityInput" class="form-control" placeholder="Enter placement volume size" required>
+                        <i class="fa-solid fa-arrow-up-9-1 input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Min/Max Allocation Dynamic Information Bar -->
+                <div class="info-strip">
+                    <span id="minLimitText">Min Order Count: --</span>
+                    <span id="maxLimitText">Max Order Count: --</span>
+                </div>
+
+                <!-- Summary Analytics Grid Output Frame -->
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <span class="lbl">Delivery Velocity</span>
+                        <span class="val" id="avgTimeText">--</span>
+                    </div>
+                    <div class="summary-card highlight">
+                        <span class="lbl">Order Charge</span>
+                        <span class="val" id="chargeText">₹0.00</span>
+                    </div>
+                </div>
+
+                <!-- Confirmation Processing Button Element -->
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <i class="fa-solid fa-cart-plus"></i> Confirm Order Request
+                </button>
+
+            </form>
+        </div>
+
+        <!-- ================= VIEW 2: ADD FUNDS (MANI ADD) PAGE ================= -->
+        <div id="walletViewWrapper" class="app-view">
+            <div class="glass-card">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; color: #ffffff;">Automatic / Manual Wallet Deposit</h2>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Scan the QR layout code to transfer capital assets instantly</p>
+                </div>
+
+                <!-- QR Display Block Segment Area -->
+                <div class="qr-section-wrapper">
+                    <div class="qr-placeholder-img">
+                        <!-- Custom Direct Link QR Image Resource Mapping -->
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=8858284791@fam&pn=SMMNEXUS&cu=INR" alt="Payment QR Code Gateway">
+                    </div>
+                    <div style="margin-bottom: 12px; font-weight: 700; color: var(--accent); font-size: 14px;">
+                        UPI ID: <span style="color:#ffffff; font-family: monospace;">8858284791@fam</span>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <a href="https://drive.google.com/file/d/1IAyw3bsJ7aj-i50KlcNgDw3LuceMGrZf/view?usp=drivesdk" target="_blank" style="color: var(--primary); font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> View Official QR Document
+                        </a>
+                    </div>
+                    <div class="deposit-notice-text">
+                        Scan the code using PhonePe, GPay, or Paytm. After transferring the money, copy your 12-digit transaction UTR reference index code number and paste it down here.
+                    </div>
+                </div>
+
+                <!-- Form For Logging Fund Requests to Admin System Pipeline via FormSubmit -->
+                <form id="walletDepositForm" action="https://formsubmit.co/ramlakhanchaurasiya26@gmail.com" method="POST">
+                    
+                    <input type="hidden" name="_subject" id="fs_wallet_subject" value="New Wallet Deposit Request Received">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
+                    
+                    <!-- Core Funding Structural Variables Information Blocks Mapping -->
+                    <input type="hidden" name="Deposit Action Request ID" id="payload_deposit_id">
+                    <input type="hidden" name="User Requesting" id="payload_deposit_user">
+                    <input type="hidden" name="Previous Wallet Balance" id="payload_prev_balance">
+                    <input type="hidden" name="New Wallet Balance Updated" id="payload_new_balance">
+                    <input type="hidden" name="Transaction Date Time Stamp" id="payload_deposit_time">
+
+                    <!-- Monetary Input Parameter Sizing -->
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa-solid fa-indian-rupee-sign"></i> Deposit Amount (₹)</label>
+                        <div class="input-wrapper">
+                            <input type="number" name="Deposited Amount Value" id="depositAmountInput" class="form-control" placeholder="Enter exactly how much money you paid" min="1" required>
+                            <i class="fa-solid fa-indian-rupee-sign input-icon"></i>
+                        </div>
+                    </div>
+
+                    <!-- Unique UTR Transaction Code Verification Area -->
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa-solid fa-fingerprint"></i> UPI UTR / Transaction ID (12 Digits)</label>
+                        <div class="input-wrapper">
+                            <input type="text" name="UTR Transaction Number String" id="depositUtrInput" class="form-control" placeholder="e.g. 364718294021" minlength="12" maxlength="20" required>
+                            <i class="fa-solid fa-fingerprint input-icon"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);">
+                        <i class="fa-solid fa-shield-heart"></i> Verify & Request Settlement
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Quick Links Navigation Controls Action Panel Matrix Layout -->
+    <div class="floating-actions" id="appFloats">
+        <button class="btn-float btn-offers" id="offersBtn" title="View Current Platform Campaigns" type="button">
+            <i class="fa-solid fa-fire"></i>
+        </button>
+        <a href="https://wa.me/917851996765" target="_blank" class="btn-float btn-whatsapp" title="Connect Directly With Support Channel Line" rel="noopener">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <!-- Central Alert Notifications Management Box Layout Element Overlay Frame Container -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box" id="modalBox">
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Core Internal Structural Dataset Model Array Matrix Index Properties Definition Mapping Blocks
+        const servicesData = {
+            "Instagram Followers": [
+                { id: "6309", name: "6309 Instagram Followers | Superfast | ₹25 per 1000", rate: 25, min: 100, max: 50000, time: "15 mins", linkType: "Instagram profile username or profile URL", desc: "Instantly deploy high velocity metrics directly to targeted profile handlers profiles pipelines." },
+                { id: "6310", name: "6310 Instagram Followers | Real Profiles | ₹30 per 1000", rate: 30, min: 50, max: 25000, time: "45 mins", linkType: "Instagram profile username or profile URL", desc: "Organic system distribution patterns matching verified user profiles data arrays maps clusters metrics." },
+                { id: "6311", name: "6311 Instagram Followers | Non Drop | ₹35 per 1000", rate: 35, min: 100, max: 100000, time: "2 hours", linkType: "Instagram profile username or profile URL", desc: "Lifetime execution stability metrics guarantees configured against downstream network updates sweeps." },
+                { id: "6312", name: "6312 Instagram Followers | India Target | ₹40 per 1000", rate: 40, min: 100, max: 15000, time: "1 hour", linkType: "Instagram profile username or profile URL", desc: "Geographic filter parameters restricted to specific regional user cluster coordinates profiles mappings." },
+                { id: "6313", name: "6313 Instagram Followers | Fast Start | ₹28 per 1000", rate: 28, min: 100, max: 40000, time: "5 mins", linkType: "Instagram profile username or profile URL", desc: "Minimal initiation phase cycle execution path configured to process order blocks almost instantly." },
+                { id: "6314", name: "6314 Instagram Followers | Premium Quality | ₹45 per 1000", rate: 45, min: 20, max: 10000, time: "30 mins", linkType: "Instagram profile username or profile URL", desc: "High interaction trace data parameters matching premium grade user ecosystem segments loops profiles." }
+            ],
+            "Instagram Likes": [
+                { id: "7001", name: "7001 Instagram Likes | Cheapest | ₹10 per 1000", rate: 10, min: 100, max: 100000, time: "10 mins", linkType: "Instagram post/reel link", desc: "Maximum volumetric optimization parameters tuned to output budget allocations metrics sequences maps." },
+                { id: "7002", name: "7002 Instagram Reel Likes | High Speed | ₹15 per 1000", rate: 15, min: 50, max: 50000, time: "5 mins", linkType: "Instagram post/reel link", desc: "High priority processing lines specifically configured to interact seamlessly within mobile reels elements indices." },
+                { id: "7003", name: "7003 Instagram Likes | Real Profiles | ₹20 per 1000", rate: 20, min: 20, max: 20000, time: "30 mins", linkType: "Instagram post/reel link", desc: "Affirmative profile action vectors triggered from human behavioral model lookup sequences indices matrices." },
+                { id: "7004", name: "7004 Instagram Post Likes | Instant | ₹12 per 1000", rate: 12, min: 50, max: 75000, time: "1 min", linkType: "Instagram post/reel link", desc: "Direct handshake integration paths resulting in immediate counter status changes values arrays logs updates." },
+                { id: "7005", name: "7005 Instagram Likes | Premium | ₹25 per 1000", rate: 25, min: 10, max: 15000, time: "15 mins", linkType: "Instagram post/reel link", desc: "Top tier network infrastructure elements allocating verified highly stable accounts engagement vectors patterns." },
+                { id: "7006", name: "7006 Instagram Likes | India Mix | ₹18 per 1000", rate: 18, min: 100, max: 30000, time: "25 mins", linkType: "Instagram post/reel link", desc: "Regional mixed demographic localization matrix processing affirmation signals points arrays indices data logs." }
+            ],
+            "Instagram Views": [
+                { id: "8001", name: "8001 Instagram Reel Views | Instant | ₹8 per 1000", rate: 8, min: 100, max: 1000000, time: "2 mins", linkType: "video/reel/shorts link", desc: "Massive scale delivery allocation array capable of scaling tracking parameters to multi-million thresholds data nodes." },
+                { id: "8002", name: "8002 Instagram Video Views | Fast | ₹10 per 1000", rate: 10, min: 100, max: 500000, time: "12 mins", linkType: "video/reel/shorts link", desc: "High velocity distribution stream simulating continuous viewer session sequences blocks trees." },
+                { id: "8003", name: "8003 Instagram Story Views | ₹12 per 1000", rate: 12, min: 100, max: 50000, time: "20 mins", linkType: "video/reel/shorts link", desc: "Ephemeral asset tracking pipelines handling story context parameters precisely safely loops models." },
+                { id: "8004", name: "8004 Instagram Reel Views | High Speed | ₹15 per 1000", rate: 15, min: 500, max: 2000000, time: "1 min", linkType: "video/reel/shorts link", desc: "Maximum bandwidth capacity allocation targeting accelerated display parameter updates sequences graphs." },
+                { id: "8005", name: "8005 Instagram Views | Worldwide | ₹9 per 1000", rate: 9, min: 100, max: 1000000, time: "15 mins", linkType: "video/reel/shorts link", desc: "Global edge node proxies distribution tracking views paths across varied multinational internet topologies data logs." },
+                { id: "8006", name: "8006 Instagram Views | Premium | ₹18 per 1000", rate: 18, min: 100, max: 250000, time: "10 mins", linkType: "video/reel/shorts link", desc: "High engagement index distribution processing long session runtime trace telemetry arrays blocks." }
+            ],
+            "Instagram Comments": [
+                { id: "8501", name: "8501 Instagram Comments | Custom | ₹50 per 1000", rate: 50, min: 10, max: 5000, time: "1 hour", linkType: "Instagram post/reel link", desc: "Textual list array variables parsed line-by-line via automated profile message insertion algorithms blocks indices rules." },
+                { id: "8502", name: "8502 Instagram Emoji Comments | ₹35 per 1000", rate: 35, min: 10, max: 10000, time: "30 mins", linkType: "Instagram post/reel link", desc: "Contextual expression graphics symbols vectors arrays mapped according to content layout theme configurations." },
+                { id: "8503", name: "8503 Instagram Random Comments | ₹40 per 1000", rate: 40, min: 10, max: 7500, time: "45 mins", linkType: "Instagram post/reel link", desc: "Standard generic engagement statement string array generation simulating broad user interaction profiles frameworks logs." },
+                { id: "8504", name: "8504 Instagram Comments | Premium | ₹60 per 1000", rate: 60, min: 5, max: 2500, time: "2 hours", linkType: "Instagram post/reel link", desc: "Highly detailed structured native wording logs deployed via aged high performance profile identities clusters." },
+                { id: "8505", name: "8505 Instagram Comments | India | ₹55 per 1000", rate: 55, min: 10, max: 3000, time: "1.5 hours", linkType: "Instagram post/reel link", desc: "Sub-continental language patterns variations mix ensuring accurate domestic interaction telemetry logs metrics grids." }
+            ],
+            "YouTube Subscribers": [
+                { id: "9001", name: "9001 YouTube Subscribers | Basic | ₹50 per 1000", rate: 50, min: 50, max: 5000, time: "24 hours", linkType: "YouTube channel link", desc: "Controlled expansion flow limits to securely manage growth counters profiles inside analytic dashboards grids indices." },
+                { id: "9002", name: "9002 YouTube Subscribers | Fast | ₹70 per 1000", rate: 70, min: 100, max: 10000, time: "12 hours", linkType: "YouTube channel link", desc: "Elevated execution velocity thresholds routing massive channel subscription actions streams simultaneously variables." },
+                { id: "9003", name: "9003 YouTube Subscribers | Premium | ₹90 per 1000", rate: 90, min: 20, max: 7500, time: "6 hours", linkType: "YouTube channel link", desc: "High retention priority account units carrying rich internal interaction trace logs profiles indicators datasets." },
+                { id: "9004", name: "9004 YouTube Subscribers | India | ₹80 per 1000", rate: 80, min: 50, max: 5000, time: "18 hours", linkType: "YouTube channel link", desc: "Localized account infrastructure array referencing domestic regional identification variables maps parameters clusters." },
+                { id: "9005", name: "9005 YouTube Subscribers | Stable | ₹100 per 1000", rate: 100, min: 100, max: 20000, time: "12 hours", linkType: "YouTube channel link", desc: "Advanced protection layer script processing actively tracking and refilling anomalies in target status counts fields." },
+                { id: "9006", name: "9006 YouTube Subscribers | High Quality | ₹120 per 1000", rate: 120, min: 10, max: 3000, time: "4 hours", linkType: "YouTube channel link", desc: "Absolute top quality user profile components executing complex multi-layered channel connection logic matrices schemas." }
+            ],
+            "YouTube Views": [
+                { id: "9501", name: "9501 YouTube Views | Basic | ₹25 per 1000", rate: 25, min: 100, max: 500000, time: "3 hours", linkType: "YouTube video/shorts link", desc: "Standard watch session execution pathways routing player initialization commands safely sequences loops." },
+                { id: "9502", name: "9502 YouTube Views | Fast | ₹30 per 1000", rate: 30, min: 100, max: 1000000, time: "1 hour", linkType: "YouTube video/shorts link", desc: "High bandwidth routing setup pushing viewer counter increments at accelerated frequency loops configurations." },
+                { id: "9503", name: "9503 YouTube Shorts Views | ₹20 per 1000", rate: 20, min: 200, max: 2000000, time: "30 mins", linkType: "YouTube video/shorts link", desc: "Configured strictly targeting rapid retention evaluation logic matching mobile fast scroll format modules structures." },
+                { id: "9504", name: "9504 YouTube Views | Premium | ₹40 per 1000", rate: 40, min: 100, max: 250000, time: "2 hours", linkType: "YouTube video/shorts link", desc: "Extended playback telemetry data blocks designed to fortify organic runtime duration graphs maps indexes values." },
+                { id: "9505", name: "9505 YouTube Views | India | ₹35 per 1000", rate: 35, min: 100, max: 300000, time: "4 hours", linkType: "YouTube video/shorts link", desc: "Regional target data points feeding national viewer metrics safely inside video configuration analytics charts tables." },
+                { id: "9506", name: "9506 YouTube Views | High Retention | ₹50 per 1000", rate: 50, min: 50, max: 100000, time: "1.5 hours", linkType: "YouTube video/shorts link", desc: "Maximum lifecycle playback curves keeping linear stability metrics parameters perfectly aligned." }
+            ],
+            "YouTube Likes": [
+                { id: "9701", name: "9701 YouTube Likes | Basic | ₹25 per 1000", rate: 25, min: 100, max: 100000, time: "45 mins", linkType: "YouTube video/shorts link", desc: "Economic video valuation affirmation nodes mapping connection metrics variables efficiently blocks maps symbols." },
+                { id: "9702", name: "9702 YouTube Likes | Fast | ₹30 per 1000", rate: 30, min: 100, max: 250000, time: "15 mins", linkType: "YouTube video/shorts link", desc: "Rapid processing acceleration engine nodes shifting data counter status indicators almost instantly fields values." },
+                { id: "9703", name: "9703 YouTube Likes | Premium | ₹45 per 1000", rate: 45, min: 20, max: 50000, time: "30 mins", linkType: "YouTube video/shorts link", desc: "Aged highly reputable profile accounts generating strong interaction value tags metrics layers arrays logs." },
+                { id: "9704", name: "9704 YouTube Shorts Likes | ₹20 per 1000", rate: 20, min: 100, max: 500000, time: "10 mins", linkType: "YouTube video/shorts link", desc: "Tailored validation patterns specifically processing short format affirmation elements structures accurately maps." },
+                { id: "9705", name: "9705 YouTube Likes | India | ₹35 per 1000", rate: 35, min: 50, max: 40000, time: "1 hour", linkType: "YouTube video/shorts link", desc: "Geolocated subcontinent account structures routing interaction affirmation sequences via local data nodes grids layout." }
+            ],
+            "Best Services": [],
+            "New Services": []
+        };
+
+        // Automated Cross-Compilation Setup Loops Engine
+        (function autoGenerateMixedSubsets() {
+            servicesData["Best Services"] = [
+                { ...servicesData["Instagram Followers"][2], id: "NEX-6311", name: "[★] NEX-6311 IG Followers | Non Drop | ₹35 per 1000" },
+                { ...servicesData["Instagram Likes"][3], id: "NEX-7004", name: "[★] NEX-7004 IG Post Likes | Instant | ₹12 per 1000" },
+                { ...servicesData["Instagram Views"][0], id: "NEX-8001", name: "[★] NEX-8001 IG Reel Views | Instant | ₹8 per 1000" },
+                { ...servicesData["YouTube Subscribers"][4], id: "NEX-9005", name: "[★] NEX-9005 YT Subscribers | Stable | ₹100 per 1000" },
+                { ...servicesData["YouTube Views"][5], id: "NEX-9506", name: "[★] NEX-9506 YT Views | High Retention | ₹50 per 1000" },
+                { ...servicesData["YouTube Likes"][2], id: "NEX-9703", name: "[★] NEX-9703 YT Likes | Premium | ₹45 per 1000" }
+            ];
+
+            servicesData["New Services"] = [
+                { ...servicesData["Instagram Followers"][5], id: "NEW-6314", name: "[🆕] NEW-6314 IG Followers | Premium Quality | ₹45 per 1000" },
+                { ...servicesData["Instagram Likes"][1], id: "NEW-7002", name: "[🆕] NEW-7002 IG Reel Likes | High Speed | ₹15 per 1000" },
+                { ...servicesData["Instagram Comments"][0], id: "NEW-8501", name: "[🆕] NEW-8501 IG Comments | Custom | ₹50 per 1000" },
+                { ...servicesData["YouTube Subscribers"][5], id: "NEW-9006", name: "[🆕] NEW-9006 YT Subscribers | High Quality | ₹120 per 1000" },
+                { ...servicesData["YouTube Views"][2], id: "NEW-9503", name: "[🆕] NEW-9503 YT Shorts Views | ₹20 per 1000" },
+                { ...servicesData["YouTube Likes"][3], id: "NEW-9704", name: "[🆕] NEW-9704 YT Shorts Likes | ₹20 per 1000" }
+            ];
+        })();
+
+        // DOM Element Variables Mapping Index
+        const categorySelect = document.getElementById('categorySelect');
+        const serviceSelect = document.getElementById('serviceSelect');
+        const searchService = document.getElementById('searchService');
+        const descriptionBox = document.getElementById('descriptionBox');
+        const descriptionText = document.getElementById('descriptionText');
+        const linkLabel = document.getElementById('linkLabel');
+        const linkInput = document.getElementById('linkInput');
+        const quantityInput = document.getElementById('quantityInput');
+        const minLimitText = document.getElementById('minLimitText');
+        const maxLimitText = document.getElementById('maxLimitText');
+        const avgTimeText = document.getElementById('avgTimeText');
+        const chargeText = document.getElementById('chargeText');
+        const smmOrderForm = document.getElementById('smmOrderForm');
+        const walletDepositForm = document.getElementById('walletDepositForm');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const offersBtn = document.getElementById('offersBtn');
+
+        // Layout Auth & Multi-View Mappings
+        const authBox = document.getElementById('authBox');
+        const appNavbar = document.getElementById('appNavbar');
+        const appViewSwitcher = document.getElementById('appViewSwitcher');
+        const appPanel = document.getElementById('appPanel');
+        const appFloats = document.getElementById('appFloats');
+        const navWalletBalance = document.getElementById('navWalletBalance');
+
+        // View Wrapper Containers Mappings
+        const orderViewWrapper = document.getElementById('orderViewWrapper');
+        const walletViewWrapper = document.getElementById('walletViewWrapper');
+        const tabOrderView = document.getElementById('tabOrderView');
+        const tabWalletView = document.getElementById('tabWalletView');
+
+        let activeCategoryServices = [];
+        let selectedServiceGlobal = null;
+
+        /* PERSISTENT LIVE BALANCE MANAGEMENT FUNCTIONS SYSTEM */
+        function getUserBalance(username) {
+            const balanceKey = `smm_balance_${username}`;
+            let currentBalance = localStorage.getItem(balanceKey);
+            if (currentBalance === null) {
+                // Initialize default wallet capital to zero for new user registrations
+                localStorage.setItem(balanceKey, "0.00");
+                return 0.00;
+            }
+            return parseFloat(currentBalance);
+        }
+
+        function setUserBalance(username, amount) {
+            const balanceKey = `smm_balance_${username}`;
+            localStorage.setItem(balanceKey, parseFloat(amount).toFixed(2));
+            updateNavbarWalletDisplay();
+        }
+
+        function updateNavbarWalletDisplay() {
+            const loggedInUser = localStorage.getItem('smm_logged_user');
+            if (loggedInUser) {
+                const bal = getUserBalance(loggedInUser);
+                navWalletBalance.textContent = `₹${bal.toFixed(2)}`;
+            }
+        }
+
+        /* SCREEN MULTI-VIEW ROUTING TOGGLE ENGINE */
+        function switchMainView(targetView) {
+            if (targetView === 'order') {
+                orderViewWrapper.classList.add('active');
+                walletViewWrapper.classList.remove('active');
+                tabOrderView.classList.add('active');
+                tabWalletView.classList.remove('active');
+            } else if (targetView === 'wallet') {
+                orderViewWrapper.classList.remove('active');
+                walletViewWrapper.classList.add('active');
+                tabOrderView.classList.remove('active');
+                tabWalletView.classList.add('active');
+            }
+        }
+
+        /* MANUAL AUTHENTICATION & SESSION PERSISTENCE ENGINE */
+        function checkSessionState() {
+            const loggedInUser = localStorage.getItem('smm_logged_user');
+            if (loggedInUser) {
+                authBox.style.display = 'none';
+                appNavbar.style.display = 'flex';
+                appViewSwitcher.style.display = 'grid';
+                appPanel.style.display = 'block';
+                appFloats.style.display = 'flex';
+                updateNavbarWalletDisplay();
+                switchMainView('order'); // Fallback to main order placement screen layout on start
+            } else {
+                authBox.style.display = 'block';
+                appNavbar.style.display = 'none';
+                appViewSwitcher.style.display = 'none';
+                appPanel.style.display = 'none';
+                appFloats.style.display = 'none';
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const forms = document.querySelectorAll('.auth-form');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        function handleManualRegister(e) {
+            e.preventDefault();
+            const user = document.getElementById('regUser').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const pass = document.getElementById('regPass').value;
+
+            if (localStorage.getItem(`smm_user_${user}`)) {
+                showSystemModal('error', 'Registration Error', 'Username already exists inside system registry.');
+                return;
+            }
+
+            const registrationData = { username: user, email: email, password: pass };
+            localStorage.setItem(`smm_user_${user}`, JSON.stringify(registrationData));
+            
+            // Allocate initial balance index tracking for registered slot immediately
+            getUserBalance(user);
+
+            showSystemModal('success', 'Profile Initialized', 'Registration credentials written successfully. Proceeding to login screen.');
+            e.target.reset();
+            switchAuthTab('login');
+        }
+
+        function handleManualLogin(event) {
+            event.preventDefault();
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value;
+
+            const savedProfileRecord = localStorage.getItem(`smm_user_${user}`);
+            if (!savedProfileRecord) {
+                showSystemModal('error', 'Authentication Failed', 'Provided entry record could not be mapped to an active account.');
+                return;
+            }
+
+            const userObj = JSON.parse(savedProfileRecord);
+
+            if (userObj.password === pass) {
+                localStorage.setItem('smm_logged_user', userObj.username);
+                showSystemModal('success', 'Access Authorized', 'Workspace profile handshake complete. Loading dashboard interface parameters.');
+                setTimeout(() => {
+                    closeSystemModal();
+                    checkSessionState();
+                }, 1000);
+            } else {
+                showSystemModal('error', 'Validation Denied', 'Security signature keys do not match account parameters values.');
+            }
+        }
+
+        function handleManualLogout() {
+            localStorage.removeItem('smm_logged_user');
+            showSystemModal('success', 'Session Terminated', 'Logged out successfully. Re-routing to entry authentication module view.');
+            setTimeout(() => {
+                closeSystemModal();
+                checkSessionState();
+            }, 1000);
+        }
+
+        // Dropdown populating logic methods layout
+        function initCategoryDropdown() {
+            categorySelect.innerHTML = "";
+            Object.keys(servicesData).forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                categorySelect.appendChild(opt);
+            });
+        }
+
+        function renderServices(filterQuery = "") {
+            const selectedCategory = categorySelect.value;
+            activeCategoryServices = servicesData[selectedCategory] || [];
+            
+            serviceSelect.innerHTML = "";
+            
+            const normalizedQuery = filterQuery.toLowerCase().trim();
+            const filtered = activeCategoryServices.filter(srv => 
+                srv.name.toLowerCase().includes(normalizedQuery) || srv.id.toLowerCase().includes(normalizedQuery)
+            );
+
+            if(filtered.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.textContent = "No matching service paths found";
+                serviceSelect.appendChild(opt);
+                clearServiceMetadataView();
+                return;
+            }
+
+            filtered.forEach(srv => {
+                const opt = document.createElement('option');
+                opt.value = srv.id;
+                opt.textContent = srv.name;
+                serviceSelect.appendChild(opt);
+            });
+
+            handleServiceSelectionChange(filtered[0].id);
+        }
+
+        function handleServiceSelectionChange(serviceId) {
+            if(!serviceId) {
+                clearServiceMetadataView();
+                return;
+            }
+            
+            const selectedCategory = categorySelect.value;
+            const currentService = servicesData[selectedCategory].find(s => s.id === serviceId);
+            
+            if(!currentService) return;
+            selectedServiceGlobal = currentService;
+
+            descriptionText.innerHTML = `
+                <p style="margin-bottom:8px; font-weight:500;">${currentService.desc}</p>
+                <div style="display:flex; align-items:center; gap:5px; margin-top:6px;">
+                    <span style="color:var(--accent); font-weight:700; font-size:12px; text-transform:uppercase;">Required Format:</span>
+                    <span style="font-size:12px; color:var(--text-main); font-weight:600;">${currentService.linkType}</span>
+                </div>
+            `;
+            descriptionBox.style.display = "block";
+            
+            linkLabel.innerHTML = `<i class="fa-solid fa-link"></i> Link Target Setup (${currentService.linkType})`;
+            linkInput.placeholder = `Provide valid target for: ${currentService.linkType}`;
+            
+            minLimitText.textContent = `Min Order Volume: ${currentService.min.toLocaleString()}`;
+            maxLimitText.textContent = `Max Order Volume: ${currentService.max.toLocaleString()}`;
+            avgTimeText.textContent = currentService.time;
+            
+            calculateLiveCharge();
+        }
+
+        function clearServiceMetadataView() {
+            selectedServiceGlobal = null;
+            descriptionBox.style.display = "none";
+            linkLabel.innerHTML = `<i class="fa-solid fa-link"></i> Target Link`;
+            linkInput.placeholder = "Enter link destination URL";
+            minLimitText.textContent = "Min Order Count: --";
+            maxLimitText.textContent = "Max Order Count: --";
+            avgTimeText.textContent = "--";
+            chargeText.textContent = "₹0.00";
+        }
+
+        function calculateLiveCharge() {
+            if(!selectedServiceGlobal) {
+                chargeText.textContent = "₹0.00";
+                return;
+            }
+            const quantity = parseInt(quantityInput.value) || 0;
+            const computedCharge = (quantity / 1000) * selectedServiceGlobal.rate;
+            chargeText.textContent = `₹${computedCharge.toFixed(2)}`;
+        }
+
+        function showSystemModal(type, title, desc, customHtml = "") {
+            const modalContent = document.getElementById('modalContent');
+            let iconMarkup = "";
+            
+            if(type === 'success') {
+                iconMarkup = `<div class="modal-icon success"><i class="fa-solid fa-circle-check"></i></div>`;
+            } else if(type === 'error') {
+                iconMarkup = `<div class="modal-icon error"><i class="fa-solid fa-triangle-exclamation"></i></div>`;
+            } else {
+                iconMarkup = `<div class="modal-icon offer"><i class="fa-solid fa-fire-flame-curved"></i></div>`;
+            }
+
+            modalContent.innerHTML = `
+                ${iconMarkup}
+                <div class="modal-title">${title}</div>
+                <div class="modal-desc">${desc}</div>
+                ${customHtml}
+                <button type="button" class="btn-modal-close" onclick="closeSystemModal()">Close Details</button>
+            `;
+            modalOverlay.classList.add('active');
+        }
+
+        function closeSystemModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        // Event Hook Bindings Systems
+        categorySelect.addEventListener('change', () => {
+            searchService.value = "";
+            renderServices();
+        });
+
+        serviceSelect.addEventListener('change', (e) => {
+            handleServiceSelectionChange(e.target.value);
+        });
+
+        searchService.addEventListener('input', (e) => {
+            renderServices(e.target.value);
+        });
+
+        quantityInput.addEventListener('input', calculateLiveCharge);
+
+        /* SUBMIT ACTION 1: PLACING NEW ORDER (WITH LIVE DEDUCTION LOGIC) */
+        smmOrderForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const activeSessionUser = localStorage.getItem('smm_logged_user');
+            if(!activeSessionUser) return;
+
+            if(!selectedServiceGlobal) {
+                showSystemModal('error', 'Selection Required', 'Please assign an active marketing pipeline before confirming.');
+                return;
+            }
+
+            const linkVal = linkInput.value.trim();
+            const qtyVal = parseInt(quantityInput.value) || 0;
+            const absoluteCalculatedCost = parseFloat(((qtyVal / 1000) * selectedServiceGlobal.rate).toFixed(2));
+            const currentWalletCapital = getUserBalance(activeSessionUser);
+
+            if(!linkVal) {
+                showSystemModal('error', 'Empty Input Reference', 'The destination link target URL cannot remain blank.');
+                return;
+            }
+
+            if(qtyVal < selectedServiceGlobal.min || qtyVal > selectedServiceGlobal.max) {
+                showSystemModal('error', 'Volume Limits Violation', `Quantity bound criteria error. Allowed volume parameters range between ${selectedServiceGlobal.min} and ${selectedServiceGlobal.max} units.`);
+                return;
+            }
+
+            /* ACCOUNT WALLET BALANCE SUFFICIENCY VERIFICATION INJECTION CHECK */
+            if (currentWalletCapital < absoluteCalculatedCost) {
+                showSystemModal('error', 'Insufficient Funds (Paise Kam Hain)', `Your balance is ₹${currentWalletCapital.toFixed(2)}, but this order costs ₹${absoluteCalculatedCost.toFixed(2)}.<br><br>Please navigate to the <b>Add Funds (Mani Add)</b> tab to recharge your wallet account instantly.`);
+                return;
+            }
+
+            // Deduct the calculated service cost from client memory store structure immediately
+            const updatedWalletCapital = currentWalletCapital - absoluteCalculatedCost;
+            setUserBalance(activeSessionUser, updatedWalletCapital);
+
+            const uniqueTimestamp = Date.now();
+            const orderIdGenerated = `NEX${uniqueTimestamp}`;
+            const currentDateTimeString = new Date().toLocaleString();
+
+            // Setup programmatic payload field elements bindings parameters
+            document.getElementById('payload_order_id').value = orderIdGenerated;
+            document.getElementById('payload_user_session').value = activeSessionUser;
+            document.getElementById('payload_category').value = categorySelect.value;
+            document.getElementById('payload_service_name').value = selectedServiceGlobal.name;
+            document.getElementById('payload_service_id').value = selectedServiceGlobal.id;
+            document.getElementById('payload_link').value = linkVal;
+            document.getElementById('payload_quantity').value = qtyVal;
+            document.getElementById('payload_charge').value = `₹${absoluteCalculatedCost.toFixed(2)}`;
+            document.getElementById('payload_balance_remaining').value = `₹${updatedWalletCapital.toFixed(2)}`;
+            document.getElementById('payload_avg_time').value = selectedServiceGlobal.time;
+            document.getElementById('payload_datetime').value = currentDateTimeString;
+
+            document.getElementById('fs_subject').value = `New Order Placed By [${activeSessionUser}] - ID: [${orderIdGenerated}]`;
+
+            showSystemModal('success', 'Order Placed & Money Deducted', `Order trace tag created: <b>${orderIdGenerated}</b>.<br>Cost: ₹${absoluteCalculatedCost.toFixed(2)} has been deducted from your account.<br>Remaining Balance: <b>₹${updatedWalletCapital.toFixed(2)}</b>.<br><br>Routing dispatch payload record parameters to execution servers...`);
+
+            setTimeout(() => {
+                smmOrderForm.submit();
+            }, 2000);
+        });
+
+        /* SUBMIT ACTION 2: ADD FUNDS (MANI ADD REQUEST LOGIC WITH SIMULATION UPDATE) */
+        walletDepositForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const activeSessionUser = localStorage.getItem('smm_logged_user');
+            if(!activeSessionUser) return;
+
+            const fundingAmountValue = parseFloat(document.getElementById('depositAmountInput').value) || 0;
+            const transactionUtrCode = document.getElementById('depositUtrInput').value.trim();
+
+            if (fundingAmountValue <= 0) {
+                showSystemModal('error', 'Invalid Sum', 'Deposit metrics valuation must scale above zero rupees.');
+                return;
+            }
+
+            if (transactionUtrCode.length < 12) {
+                showSystemModal('error', 'Invalid Identification Key', 'The UPI UTR code sequence tracking code must consist of at least a 12 digit format structure.');
+                return;
+            }
+
+            const currentBalanceBeforeAction = getUserBalance(activeSessionUser);
+            // Simulate instant balance allocation updating inside client memory profile stack context
+            const theoreticalUpdatedBalanceSum = currentBalanceBeforeAction + fundingAmountValue;
+            setUserBalance(activeSessionUser, theoreticalUpdatedBalanceSum);
+
+            const depositTimestampId = `DEP${Date.now()}`;
+            const executionDateTimeString = new Date().toLocaleString();
+
+            // Configure FormSubmit payload components before posting values
+            document.getElementById('payload_deposit_id').value = depositTimestampId;
+            document.getElementById('payload_deposit_user').value = activeSessionUser;
+            document.getElementById('payload_prev_balance').value = `₹${currentBalanceBeforeAction.toFixed(2)}`;
+            document.getElementById('payload_new_balance').value = `₹${theoreticalUpdatedBalanceSum.toFixed(2)}`;
+            document.getElementById('payload_deposit_time').value = executionDateTimeString;
+
+            document.getElementById('fs_wallet_subject').value = `Deposit Verification Request [${depositTimestampId}] From User: ${activeSessionUser}`;
+
+            showSystemModal('success', 'Mani Add Verification Request Filed', `Deposit identification reference: <b>${depositTimestampId}</b>.<br>Amount: ₹${fundingAmountValue.toFixed(2)} added to your active display stack.<br><br>Your wallet display updates to: <b>₹${theoreticalUpdatedBalanceSum.toFixed(2)}</b>.<br><br>The transaction data index blocks are transferring to verification nodes...`);
+
+            setTimeout(() => {
+                walletDepositForm.submit();
+            }, 2500);
+        });
+
+        offersBtn.addEventListener('click', () => {
+            const offersHtml = `
+                <div class="offers-list">
+                    <div class="offer-item"><i class="fa-solid fa-gift"></i> <span><b>Welcome Wallet Incentive:</b> Deposit threshold orders scaling above ₹2,000 gain priority status queues routes.</span></div>
+                    <div class="offer-item"><i class="fa-solid fa-lightning-bolt"></i> <span><b>Instagram Reel Engine Updates:</b> Highly efficient node infrastructure speed parameters maximized across category indices items.</span></div>
+                </div>
+            `;
+            showSystemModal('offer', 'Active SMMNEXUS System Incentives', 'Live operational updates tracking modifications loops configuration tables properties.', offersHtml);
+        });
+
+        modalOverlay.addEventListener('click', function(e) {
+            if(e.target === modalOverlay) {
+                closeSystemModal();
+            }
+        });
+
+        // Initialize core application framework lifecycle scripts
+        window.addEventListener('DOMContentLoaded', () => {
+            checkSessionState();
+            initCategoryDropdown();
+            renderServices();
+        });
+    </script>
+</body>
+</html>
